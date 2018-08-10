@@ -1,36 +1,46 @@
 #!/usr/bin/env python
-#Copyright 2008, Angel Yanguas-Gil
-#Rev. 2014, Ningchuan Xiao
+
+# Copyright 2008, Angel Yanguas-Gil
+# Rev. 2014, Ningchuan Xiao
 # The revised version does not require Xygraph
+
+# Rev. 2018, sort for python3
 
 # only the classes defined here are accessible
 __all__ = ['Dcel', 'Vertex', 'Hedge', 'Face']
 
 import math as m
-from point import *
+
+import sys
+sys.path.append('..')
+from geom.point import *
 
 class DcelError(Exception): pass
 
 class Vertex(Point):
     """Minimal implementation of a vertex of a 2D dcel"""
-   
+
     def __init__(self, px, py):
         Point.__init__(self, px, py)
         self.hedgelist = []
 
     def sortincident(self):
-        self.hedgelist.sort(hsort, reverse=True)
+        print(self.hedgelist)
+        # self.hedgelist.sort(hsort, reverse=True)
+        self.hedgelist.sort(key=lambda a:a.angle, reverse=True)
+        # h1.angle < h2.angle:
 
 class Vertexx:
     """Minimal implementation of a vertex of a 2D dcel"""
-    
+
     def __init__(self, px, py):
         self.x = px
         self.y = py
         self.hedgelist = []
 
     def sortincident(self):
-        self.hedgelist.sort(hsort, reverse=True)
+        # self.hedgelist.sort(hsort, reverse=True)
+        self.hedgelist.sort(keh=lambda a:a.angle, reverse=True)
     def __eq__(self, other):
         if isinstance(other, Vertex):
             return self.x==other.x and self.y==other.y
@@ -91,7 +101,7 @@ class Face:
             p += h.length
             h = h.nexthedge
         return p
-    
+
     def vertexlist(self):
         h = self.wedge
         pl = [h.origin]
@@ -202,7 +212,7 @@ class Dcel():
             f.external = f.area() < 0
 
     def findpoints(self, pl, onetoone=False):
-        """Given a list of points pl, returns a list of 
+        """Given a list of points pl, returns a list of
         with the corresponding face each point belongs to and
         None if it is outside the map.
         """
@@ -272,13 +282,13 @@ class Dcel():
         return len(self.hedges)/2
 
     # Functions added by NCX 2014:
-    
-    def findvertex(self, p): 
+
+    def findvertex(self, p):
         for v in self.vertices:
             if v.x == p.x and v.y == p.y:
                 return v
         return None
-    
+
     def findhedges(self, v1, v2): # NCX 7/4/2014
         """Finds half edges that have v1 and v2 as endpoints.
         Returns edges where v1 and v2 are the origins, respectively."""
@@ -291,7 +301,7 @@ class Dcel():
 
     def printallhedges(self):
         for e in self.hedges:
-            print e
+            print(e)
 
 #Misc. functions
 
@@ -331,7 +341,7 @@ def hangle(dx,dy):
         return m.acos(dx/l)
     else:
         return 2*m.pi - m.acos(dx/l)
-    
+
 if __name__=='__main__':
     d = Dcel()
     pgon = [ [0,10], [5,0], [10,10], [15,0], [20,10], [25,0], [30,20],
@@ -342,6 +352,4 @@ if __name__=='__main__':
               [13,14],[14,15],[15,16],[16,17],[17,0] ]
     d.load(pgon, edges)
     for a,p in zip(d.areas(), d.perimeters()):
-        print a,p
-
-
+        print(a,p)
