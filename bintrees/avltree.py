@@ -66,6 +66,9 @@ class Node(object):
         self.key = None
         self.value = None
 
+    def str(self):
+        """Added by NCX, May 1, 2017"""
+        return str(self.key)
 
 def height(node):
     return node.balance if node is not None else -1
